@@ -1,6 +1,7 @@
 package M2ijpahibernate.Entity;
 
 import java.util.Date;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -88,6 +91,22 @@ public class Film {
     @Column(name = "last_update")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdate;
+
+    @ManyToMany
+    @JoinTable(
+        name="film_actor",
+        joinColumns = @JoinColumn(name = "film_id"),
+        inverseJoinColumns =  @JoinColumn(name = "actor_id")
+    )
+    private Set<Actor> actors;
+
+    @ManyToMany
+    @JoinTable(
+        name="film_category",
+        joinColumns = @JoinColumn(name = "film_id"),
+        inverseJoinColumns =  @JoinColumn(name = "category_id")
+    )
+    private Set<Category> category;
 
     
     //#region get/set
@@ -193,6 +212,24 @@ public class Film {
 
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
-    }    
+    }
+
+    public Set<Actor> getActors() {
+        return actors;
+    }
+
+    public void setActors(Set<Actor> actors) {
+        this.actors = actors;
+    }
+
+    public Set<Category> getCategory() {
+        return category;
+    }
+    
+    public void setCategory(Set<Category> category) {
+        this.category = category;
+    } 
+    
+    
     //#endregion
 }

@@ -1,7 +1,6 @@
 package M2ijpahibernate.Entity;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -9,47 +8,42 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(name = "language")
-public class Language {
-    public Language(){
+@Table(name = "category" )
+public class Category {
+    public Category(){
         
     }
-    public Language(String name){
+    public Category(String name){
         this.name = name;
         this.lastUpdate = new Date();
     }
 
     @Id
-    @Column(name = "language_id")
+    @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer languageId;
+    private int categoryId;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "last_update")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdate;
 
-    @OneToMany(mappedBy = "languageID")
-    private Set<Film> films = new HashSet<Film>();
-
-    
+    @ManyToMany(mappedBy = "category")
+    private Set<Film> films;
 
     
     //#region get/set
-    public Integer getLanguageId() {
-        return languageId;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setLanguageId(Integer languageId) {
-        this.languageId = languageId;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -67,12 +61,14 @@ public class Language {
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+
     public Set<Film> getFilms() {
         return films;
     }
 
     public void setFilms(Set<Film> films) {
         this.films = films;
-    }
+    }    
     //#endregion
+
 }

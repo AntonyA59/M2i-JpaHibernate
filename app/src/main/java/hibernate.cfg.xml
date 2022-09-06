@@ -24,6 +24,7 @@
             <mapping class="M2ijpahibernate.Entity.Country" />
             <mapping class="M2ijpahibernate.Entity.Film" />
             <mapping class="M2ijpahibernate.Entity.Language" />
+            <mapping class="M2ijpahibernate.Entity.Category" />
 
         </session-factory>
 </hibernate-configuration>

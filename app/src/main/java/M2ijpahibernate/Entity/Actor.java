@@ -1,12 +1,14 @@
 package M2ijpahibernate.Entity;
 
 import java.util.Date;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -38,6 +40,8 @@ public class Actor {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdate;
 
+    @ManyToMany(mappedBy = "actors")
+    private Set<Film> films;
     
     //#region get/set
     public Integer getActorID() {
@@ -71,5 +75,14 @@ public class Actor {
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+
+    public Set<Film> getFilms() {
+        return films;
+    }
+
+    public void setFilms(Set<Film> films) {
+        this.films = films;
+    }
+    
     //#endregion
 }

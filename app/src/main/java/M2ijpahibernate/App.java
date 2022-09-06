@@ -4,46 +4,108 @@
 package M2ijpahibernate;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
+
 import M2ijpahibernate.Entity.Actor;
-import M2ijpahibernate.Entity.Country;
+import M2ijpahibernate.Entity.Category;
 import M2ijpahibernate.Entity.Film;
 import M2ijpahibernate.Entity.Language;
 
 
+
+
 public class App {
-
-
-    public static void main(String[] args) {
-        searchInDB();
+    public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void main(String[] args) throws IOException {
+        addActorToFilm();
     }
 
-    public static void searchInDB() {
+    public static void filmActorCategory() throws IOException {
         Session session;
 
         Configuration configuration = new Configuration().configure();
-    
-        // IMPORTANT : On ajoute bien nos Entités !!
-        // configuration.addAnnotatedClass(Film.class);
-        // configuration.addAnnotatedClass(Language.class);
-
-        // IMPORTANT
-        // ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
 
         SessionFactory sessionFactory = configuration.buildSessionFactory();
         session = sessionFactory.openSession();
-        Language l = session.getReference(Language.class, 1);
-        Iterator<Film> i = l.getFilmsParLangue().iterator();  
-        while(i.hasNext()){
-            System.out.println(i.next().getTitle());
+        Film f = session.getReference(Film.class, 1);
+        Iterator<Actor> a = f.getActors().iterator();
+        Iterator<Category> c = f.getCategory().iterator();
+        System.out.println("Film : " + f.getTitle() + "\n"); 
+    
+        System.out.println("Acteurs :");
+        while(a.hasNext()){
+            System.out.println("Nom : " + a.next().getLastName());
+            System.out.println("Prenom : " + a.next().getFirstName() + "\n");
         }
+        while (c.hasNext()) {
+            System.out.println("Catégorie : " + c.next().getName());
+        }
+        session.close();
+    }
+    public static void filmParCategory() throws IOException {
+        Session session;
+
+        Configuration configuration = new Configuration().configure();
+
+        SessionFactory sessionFactory = configuration.buildSessionFactory();
+        session = sessionFactory.openSession();
+        Category category = session.getReference(Category.class, 3);
+        Iterator<Film> films = category.getFilms().iterator();
+        System.out.println("Categorie :" + category.getName());
+        br.readLine();
+        System.out.println("Liste des films de cette catégorie: " + "\n");
+        while(films.hasNext()){
+            System.out.println(
+                "Titre : " + films.next().getTitle() + "\n" +
+                "Description : " + films.next().getDescription()
+            );
+            br.readLine();
+        }
+        session.close();
+    }
+    public static void filmParLanguage() throws IOException {
+        Session session;
+
+        Configuration configuration = new Configuration().configure();
+
+        SessionFactory sessionFactory = configuration.buildSessionFactory();
+        session = sessionFactory.openSession();
+
+        Language l = session.getReference(Language.class, 1);
+        Iterator<Film> films = l.getFilms().iterator();
+        System.out.println("Langue : " + l.getName());
+        
+        System.out.println("Film associés a cette langue :");
+        while(films.hasNext()){
+            System.out.println("Titre : " + films.next().getTitle());
+            System.out.println("Description : " + films.next().getDescription());
+        }
+        session.close();
+    }
+
+    public static void addActorToFilm() {
+        Session session;
+
+        Configuration configuration = new Configuration().configure();
+
+        SessionFactory sessionFactory = configuration.buildSessionFactory();
+        session = sessionFactory.openSession();
+        Actor a = session.getReference(Actor.class, 5);
+        Film f = session.getReference(Film.class, 50);
+        Transaction tx = session.beginTransaction();
+        f.getActors().add(a);
+
+        session.persist(a);
+    
+        tx.commit();
 
         session.close();
     }
