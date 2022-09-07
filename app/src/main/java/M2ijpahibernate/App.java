@@ -7,17 +7,25 @@ package M2ijpahibernate;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.util.Iterator;
+import java.util.List;
+
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 
+
+import M2ijpahibernate.DB.SessionManager;
 import M2ijpahibernate.Entity.Actor;
-import M2ijpahibernate.Entity.Category;
 import M2ijpahibernate.Entity.Film;
+import M2ijpahibernate.Entity.FilmActor;
 import M2ijpahibernate.Entity.Language;
+import M2ijpahibernate.ExerciceSql.Serie1;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 
 
@@ -25,60 +33,24 @@ import M2ijpahibernate.Entity.Language;
 public class App {
     public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     public static void main(String[] args) throws IOException {
-        addActorToFilm();
+        Serie1.Exercice3();
     }
 
-    public static void filmActorCategory() throws IOException {
-        Session session;
 
-        Configuration configuration = new Configuration().configure();
 
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
-        session = sessionFactory.openSession();
-        Film f = session.getReference(Film.class, 1);
-        Iterator<Actor> a = f.getActors().iterator();
-        Iterator<Category> c = f.getCategory().iterator();
-        System.out.println("Film : " + f.getTitle() + "\n"); 
-    
-        System.out.println("Acteurs :");
-        while(a.hasNext()){
-            System.out.println("Nom : " + a.next().getLastName());
-            System.out.println("Prenom : " + a.next().getFirstName() + "\n");
-        }
-        while (c.hasNext()) {
-            System.out.println("Catégorie : " + c.next().getName());
+    public static void testFactor() {
+        Session session = SessionManager.openSession();
+        Actor a1 = session.getReference(Actor.class, 3);
+        for (FilmActor Actors : a1.getfActors()) {
+            System.out.println(Actors.getActor().getFirstName() + " " + Actors.getActor().getLastName() + " :\n"+
+            "Titre : " + Actors.getFilma().getTitle() + "\n"+
+            "Description: " + Actors.getFilma().getDescription()+"\n");
         }
         session.close();
     }
-    public static void filmParCategory() throws IOException {
-        Session session;
 
-        Configuration configuration = new Configuration().configure();
-
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
-        session = sessionFactory.openSession();
-        Category category = session.getReference(Category.class, 3);
-        Iterator<Film> films = category.getFilms().iterator();
-        System.out.println("Categorie :" + category.getName());
-        br.readLine();
-        System.out.println("Liste des films de cette catégorie: " + "\n");
-        while(films.hasNext()){
-            System.out.println(
-                "Titre : " + films.next().getTitle() + "\n" +
-                "Description : " + films.next().getDescription()
-            );
-            br.readLine();
-        }
-        session.close();
-    }
     public static void filmParLanguage() throws IOException {
-        Session session;
-
-        Configuration configuration = new Configuration().configure();
-
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
-        session = sessionFactory.openSession();
-
+        Session session = SessionManager.openSession();
         Language l = session.getReference(Language.class, 1);
         Iterator<Film> films = l.getFilms().iterator();
         System.out.println("Langue : " + l.getName());
@@ -91,22 +63,127 @@ public class App {
         session.close();
     }
 
-    public static void addActorToFilm() {
-        Session session;
-
-        Configuration configuration = new Configuration().configure();
-
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
-        session = sessionFactory.openSession();
-        Actor a = session.getReference(Actor.class, 5);
-        Film f = session.getReference(Film.class, 50);
+    public static void addActorOnFilm() {
+        Session session = SessionManager.openSession();
+        Actor a1 = session.getReference(Actor.class, 90);
+        Film f1 = session.getReference(Film.class, 3);
+        FilmActor fa = new FilmActor();
+        fa.setActor(a1);
+        fa.setFilm(f1);
         Transaction tx = session.beginTransaction();
-        f.getActors().add(a);
-
-        session.persist(a);
-    
+        session.persist(fa);
         tx.commit();
 
         session.close();
+    }
+
+    public static void getActorByFirstName(){
+        
+        Session session =  SessionManager.openSession();
+
+        TypedQuery<Actor> myQuery = session.createNamedQuery("Actor.findByFirstName", Actor.class);
+
+        myQuery.setParameter("firstName", "NICK");
+
+        List<Actor> actors = myQuery.getResultList();
+
+        System.out.println(actors.size());
+    }
+
+    public static void getFilmStartN(){
+        Session session = SessionManager.openSession();
+        TypedQuery<Film> query = session.createNamedQuery("Film.startFromLetter", Film.class);
+
+        query.setParameter("letter", "N%");
+
+        List<Film> films = query.getResultList();
+
+        for (Film film : films) {
+            System.out.println(film.getTitle());
+        }
+    }
+
+    public static void getFilmWithTwoHourLength() {
+        Session session = SessionManager.openSession();
+        TypedQuery<Film> query = session.createNamedQuery("Film.FromHour", Film.class);
+
+        query.setParameter("min", 120);
+
+        List<Film> films = query.getResultList();
+
+        for (Film film : films) {
+            System.out.println(
+                "Film : " + film.getTitle()+ "\n" +
+                "Durée : " + (film.getLength() / 60)+ "h\n"
+            );
+        }
+    }
+    public static void getFilmAndLanguageReplacementCost(int rep) {
+        Session session = SessionManager.openSession();
+        TypedQuery<Object[]> query = session.createNamedQuery("Film.remplacementCost", Object[].class);
+
+        query.setParameter("remplacementCost", 10);
+
+        List<Object[]> result = query.getResultList();
+        
+            for (int j = 0; j < result.get(rep).length; j++) {
+                
+                System.out.println(result.get(rep)[j]);
+            }
+        
+        System.out.println(result.size());
+        
+        
+
+
+        
+    }
+
+    public static void getActorByFirstNameCriteria() {
+        Session session = SessionManager.openSession();
+
+        // Récupération du builder
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        // Préparation
+        CriteriaQuery<Actor> criteria = builder.createQuery(Actor.class);
+        // Selection de l'objet Root
+        Root<Actor> root = criteria.from(Actor.class);
+
+        // Création de la requête
+        criteria.select(root);
+        criteria.where(builder.equal(root.get("FirstName"), "NICK"));
+
+        List<Actor> actors = session.createQuery(criteria).getResultList();
+
+        System.out.println(actors.size());
+    }
+
+    public static void getFilm2006() {
+        Session session = SessionManager.openSession();
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Film> criteria = builder.createQuery(Film.class);
+        Root<Film> root = criteria.from(Film.class);
+        criteria.select(root);
+        criteria.where(builder.equal(root.get("releaseYear"), "2006"));
+
+        List<Film> films = session.createQuery(criteria).getResultList();
+
+        System.out.println(films.size());
+    }
+
+    public static void getActorCriteria() {
+        Session session = SessionManager.openSession();
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Actor> criteria = builder.createQuery(Actor.class);
+        Root<Actor> root = criteria.from(Actor.class);
+        criteria.select(root);
+
+        List<Actor> actors = session.createQuery(criteria).getResultList();
+
+        System.out.println(actors.size());
+
+
     }
 }

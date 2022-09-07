@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -16,13 +17,15 @@ import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "language")
+@NamedQuery(name = "S1E1", query = 
+"SELECT l.name "+
+"FROM Language l")
 public class Language {
     public Language(){
         
     }
     public Language(String name){
         this.name = name;
-        this.lastUpdate = new Date();
     }
 
     @Id
@@ -35,12 +38,10 @@ public class Language {
 
     @Column(name = "last_update")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdate;
+    private Date lastUpdate = new Date();
 
     @OneToMany(mappedBy = "languageID")
     private Set<Film> films = new HashSet<Film>();
-
-    
 
     
     //#region get/set

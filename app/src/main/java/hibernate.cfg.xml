@@ -25,6 +25,12 @@
             <mapping class="M2ijpahibernate.Entity.Film" />
             <mapping class="M2ijpahibernate.Entity.Language" />
             <mapping class="M2ijpahibernate.Entity.Category" />
-
+            <mapping class="M2ijpahibernate.Entity.FilmCategory" />
+            <mapping class="M2ijpahibernate.Entity.FilmActor" />
+            <mapping class="M2ijpahibernate.Entity.City" />
+            <mapping class="M2ijpahibernate.Entity.Address" />
+            <mapping class="M2ijpahibernate.Entity.Inventory" />
+            <mapping class="M2ijpahibernate.Entity.Staff" />
+            <mapping class="M2ijpahibernate.Entity.Store" />
         </session-factory>
 </hibernate-configuration>

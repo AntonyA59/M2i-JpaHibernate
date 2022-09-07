@@ -1,6 +1,7 @@
 package M2ijpahibernate.Entity;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -9,15 +10,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
+
 @Entity
 @Table(name = "film")
+@NamedQuery(name = "Film.startFromLetter", query = 
+"SELECT f "+
+"FROM Film f "+
+"WHERE f.title LIKE :letter")
+@NamedQuery(name = "Film.FromHour", query = 
+"SELECT f "+
+"FROM Film f "+
+"WHERE f.length = :min")
+@NamedQuery(name = "Film.remplacementCost", query = 
+"SELECT f.title, f.remplacementCost, l.name "+
+"FROM Film f "+
+"INNER JOIN Language l "+
+"ON f.languageID  = l.languageId "+
+"WHERE f.remplacementCost > :remplacementCost ")
 public class Film {
     public Film(){
 
@@ -45,7 +61,6 @@ public class Film {
         this.length = length;
         this.rating = rating;
         this.specialFeatures = specialFeatures;
-        this.lastUpdate = new Date();
         this.releaseYear = 2022;
     }
     @Id
@@ -90,23 +105,16 @@ public class Film {
 
     @Column(name = "last_update")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdate;
+    private Date lastUpdate = new Date();
 
-    @ManyToMany
-    @JoinTable(
-        name="film_actor",
-        joinColumns = @JoinColumn(name = "film_id"),
-        inverseJoinColumns =  @JoinColumn(name = "actor_id")
-    )
-    private Set<Actor> actors;
 
-    @ManyToMany
-    @JoinTable(
-        name="film_category",
-        joinColumns = @JoinColumn(name = "film_id"),
-        inverseJoinColumns =  @JoinColumn(name = "category_id")
-    )
-    private Set<Category> category;
+    @OneToMany(mappedBy = "filma")
+    private Set<FilmActor> fActors = new HashSet<FilmActor>();
+
+    @OneToMany(mappedBy = "film")
+    private Set<FilmCategory> fCategory = new HashSet<FilmCategory>();
+
+
 
     
     //#region get/set
@@ -206,30 +214,25 @@ public class Film {
         this.specialFeatures = specialFeatures;
     }
 
+    public Set<FilmCategory> getfCategory() {
+        return fCategory;
+    }
+    
     public Date getLastUpdate() {
         return lastUpdate;
     }
-
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
-
-    public Set<Actor> getActors() {
-        return actors;
+    public Set<FilmActor> getfActors() {
+        return fActors;
+    }
+    public void setfActors(Set<FilmActor> fActors) {
+        this.fActors = fActors;
+    }
+    public void setfCategory(Set<FilmCategory> fCategory) {
+        this.fCategory = fCategory;
     }
 
-    public void setActors(Set<Actor> actors) {
-        this.actors = actors;
-    }
-
-    public Set<Category> getCategory() {
-        return category;
-    }
-    
-    public void setCategory(Set<Category> category) {
-        this.category = category;
-    } 
-    
-    
     //#endregion
 }

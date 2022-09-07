@@ -32,7 +32,7 @@ public class Country {
 
     @Column(name = "last_update")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdate;
+    private Date lastUpdate = new Date();
 
 
 

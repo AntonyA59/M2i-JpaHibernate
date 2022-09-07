@@ -1,20 +1,27 @@
 package M2ijpahibernate.Entity;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "actor")
+@NamedQuery(name = "Actor.findByFirstName", query = 
+"SELECT a "+
+"FROM Actor a "+
+"WHERE a.FirstName LIKE :firstName")
 public class Actor {
     public Actor(){
 
@@ -38,11 +45,11 @@ public class Actor {
 
     @Column(name = "last_update")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdate;
+    private Date lastUpdate = new Date();
 
-    @ManyToMany(mappedBy = "actors")
-    private Set<Film> films;
-    
+    @OneToMany(mappedBy = "actor")
+    private Set<FilmActor> fActors = new HashSet<FilmActor>();
+
     //#region get/set
     public Integer getActorID() {
         return actorID;
@@ -76,13 +83,12 @@ public class Actor {
         this.lastUpdate = lastUpdate;
     }
 
-    public Set<Film> getFilms() {
-        return films;
+    public Set<FilmActor> getfActors() {
+        return fActors;
     }
 
-    public void setFilms(Set<Film> films) {
-        this.films = films;
+    public void setfActors(Set<FilmActor> fActors) {
+        this.fActors = fActors;
     }
-    
     //#endregion
 }

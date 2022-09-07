@@ -1,6 +1,7 @@
 package M2ijpahibernate.Entity;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -8,7 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,7 +20,6 @@ public class Category {
     }
     public Category(String name){
         this.name = name;
-        this.lastUpdate = new Date();
     }
 
     @Id
@@ -31,11 +31,10 @@ public class Category {
     private String name;
 
     @Column(name = "last_update")
-    private Date lastUpdate;
+    private Date lastUpdate = new Date();
 
-    @ManyToMany(mappedBy = "category")
-    private Set<Film> films;
-
+    @OneToMany(mappedBy = "category")
+    private Set<FilmCategory> fCategorie = new HashSet<FilmCategory>();
     
     //#region get/set
     public int getCategoryId() {
@@ -54,21 +53,13 @@ public class Category {
         this.name = name;
     }
 
-    public Date getLastUpdate() {
-        return lastUpdate;
+    public Set<FilmCategory> getfCategorie() {
+        return fCategorie;
+    }
+    public void setfCategorie(Set<FilmCategory> fCategorie) {
+        this.fCategorie = fCategorie;
     }
 
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public Set<Film> getFilms() {
-        return films;
-    }
-
-    public void setFilms(Set<Film> films) {
-        this.films = films;
-    }    
     //#endregion
 
 }
